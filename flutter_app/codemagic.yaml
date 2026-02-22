@@ -1,6 +1,6 @@
 # Codemagic Flutter CI/CD 配置文件
 # 用于自动构建 iOS 和 Android 应用
-
+working_directory: flutter_app
 workflows:
   # 主工作流 - Android 构建
   android-build:
