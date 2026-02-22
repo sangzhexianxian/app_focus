@@ -2,9 +2,9 @@
 # 用于自动构建 iOS 和 Android 应用
 
 workflows:
-  # 主工作流
-  flutter-workflow:
-    name: Flutter iOS and Android Build
+  # 主工作流 - Android 构建
+  android-build:
+    name: Android Build
     triggering:
       events:
         - push
@@ -16,10 +16,16 @@ workflows:
 
     environment:
       flutter: stable
-      xcode: latest
-      cocoapods: default
+      java: 17
+      gradle: latest
 
     scripts:
+      # 显示环境信息
+      - name: Show environment info
+        script: |
+          echo "Flutter version: $(flutter --version)"
+          echo "Java version: $(java -version)"
+
       # 安装依赖
       - name: Install dependencies
         script: |
@@ -52,27 +58,64 @@ workflows:
             --build-name=$APP_NAME
 
     publishing:
+      # 邮件通知
       email:
         recipients:
-          - your-email@example.com
+          - sangzhexianxian@github.com
 
-      # 发布到 Slack
-      slack:
-        channel: "#builds"
-        notify_on_success: true
-        notify_on_failure: true
+      # 发布到 Slack (可选)
+      # slack:
+      #   channel: "#builds"
+      #   notify_on_success: true
+      #   notify_on_failure: true
 
-  # iOS 构建工作流
+  # iOS 构建工作流 (需要 Mac 环境)
   ios-build:
     name: iOS Build
+    triggering:
+      events:
+        - push
+        - pull_request
+      branch_patterns:
+        - pattern: main
+          include: true
+          source: true
+
     environment:
       flutter: stable
       xcode: latest
+      cocoapods: default
 
     scripts:
-      - name: Install dependencies
-        script: flutter pub get
+      # 显示环境信息
+      - name: Show environment info
+        script: |
+          echo "Flutter version: $(flutter --version)"
+          echo "Xcode version: $(xcodebuild -version)"
 
+      # 安装依赖
+      - name: Install dependencies
+        script: |
+          flutter pub get
+
+      # 安装 CocoaPods 依赖
+      - name: Install CocoaPods dependencies
+        script: |
+          cd ios
+          pod install
+          cd ..
+
+      # 代码分析
+      - name: Run Flutter analyze
+        script: |
+          flutter analyze
+
+      # 运行测试
+      - name: Run Flutter tests
+        script: |
+          flutter test
+
+      # 构建 iOS Release
       - name: Build iOS Release
         script: |
           flutter build ios \
@@ -84,18 +127,34 @@ workflows:
     publishing:
       email:
         recipients:
-          - your-email@example.com
+          - sangzhexianxian@github.com
 
   # Web 构建工作流
   web-build:
     name: Web Build
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: main
+          include: true
+          source: true
+
     environment:
       flutter: stable
 
     scripts:
-      - name: Install dependencies
-        script: flutter pub get
+      # 显示环境信息
+      - name: Show environment info
+        script: |
+          echo "Flutter version: $(flutter --version)"
 
+      # 安装依赖
+      - name: Install dependencies
+        script: |
+          flutter pub get
+
+      # 构建 Web
       - name: Build Web
         script: |
           flutter build web \
@@ -103,16 +162,20 @@ workflows:
             --web-renderer canvaskit
 
     publishing:
+      email:
+        recipients:
+          - sangzhexianxian@github.com
+
       # 部署到 GitHub Pages
       scripts:
         - name: Deploy to GitHub Pages
           script: |
-            git config --global user.email "codemagic@yoursite.com"
+            git config --global user.email "codemagic@github.com"
             git config --global user.name "Codemagic"
-            git remote add origin https://${GITHUB_TOKEN}@github.com/YOUR_USERNAME/YOUR_REPO.git || git remote set-url origin https://${GITHUB_TOKEN}@github.com/YOUR_USERNAME/YOUR_REPO.git
+            git remote add origin https://${GITHUB_TOKEN}@github.com/sangzhexianxian/app_focus.git || git remote set-url origin https://${GITHUB_TOKEN}@github.com/sangzhexianxian/app_focus.git
             git checkout gh-pages || git checkout --orphan gh-pages
             git rm -rf .
             cp -r build/web/* .
             git add .
             git commit -m "Deploy to GitHub Pages"
-            git push origin gh-pages
+            git push origin gh-pages --force
