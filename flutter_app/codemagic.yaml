@@ -1,0 +1,118 @@
+# Codemagic Flutter CI/CD 配置文件
+# 用于自动构建 iOS 和 Android 应用
+
+workflows:
+  # 主工作流
+  flutter-workflow:
+    name: Flutter iOS and Android Build
+    triggering:
+      events:
+        - push
+        - pull_request
+      branch_patterns:
+        - pattern: main
+          include: true
+          source: true
+
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+
+    scripts:
+      # 安装依赖
+      - name: Install dependencies
+        script: |
+          flutter pub get
+
+      # 代码分析
+      - name: Run Flutter analyze
+        script: |
+          flutter analyze
+
+      # 运行测试
+      - name: Run Flutter tests
+        script: |
+          flutter test
+
+      # 构建 Android APK
+      - name: Build Android APK
+        script: |
+          flutter build apk \
+            --release \
+            --build-number=$BUILD_NUMBER \
+            --build-name=$APP_NAME
+
+      # 构建 Android App Bundle (用于 Google Play)
+      - name: Build Android App Bundle
+        script: |
+          flutter build appbundle \
+            --release \
+            --build-number=$BUILD_NUMBER \
+            --build-name=$APP_NAME
+
+    publishing:
+      email:
+        recipients:
+          - your-email@example.com
+
+      # 发布到 Slack
+      slack:
+        channel: "#builds"
+        notify_on_success: true
+        notify_on_failure: true
+
+  # iOS 构建工作流
+  ios-build:
+    name: iOS Build
+    environment:
+      flutter: stable
+      xcode: latest
+
+    scripts:
+      - name: Install dependencies
+        script: flutter pub get
+
+      - name: Build iOS Release
+        script: |
+          flutter build ios \
+            --release \
+            --build-number=$BUILD_NUMBER \
+            --build-name=$APP_NAME \
+            --no-codesign
+
+    publishing:
+      email:
+        recipients:
+          - your-email@example.com
+
+  # Web 构建工作流
+  web-build:
+    name: Web Build
+    environment:
+      flutter: stable
+
+    scripts:
+      - name: Install dependencies
+        script: flutter pub get
+
+      - name: Build Web
+        script: |
+          flutter build web \
+            --release \
+            --web-renderer canvaskit
+
+    publishing:
+      # 部署到 GitHub Pages
+      scripts:
+        - name: Deploy to GitHub Pages
+          script: |
+            git config --global user.email "codemagic@yoursite.com"
+            git config --global user.name "Codemagic"
+            git remote add origin https://${GITHUB_TOKEN}@github.com/YOUR_USERNAME/YOUR_REPO.git || git remote set-url origin https://${GITHUB_TOKEN}@github.com/YOUR_USERNAME/YOUR_REPO.git
+            git checkout gh-pages || git checkout --orphan gh-pages
+            git rm -rf .
+            cp -r build/web/* .
+            git add .
+            git commit -m "Deploy to GitHub Pages"
+            git push origin gh-pages

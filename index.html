@@ -1,0 +1,3556 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- 基础SEO优化 -->
+    <title>FOCUS - 极简目标管理 | 只做最重要的事</title>
+    <meta name="title" content="FOCUS - 极简目标管理工具 | 目标管理 时间管理 极简主义">
+    <meta name="description" content="FOCUS是一款极简目标管理工具，帮助你找到最重要的事。通过减法思维，筛选出核心目标，专注完成。支持目标管理、时间管理、每日专注、持续打卡。">
+    <meta name="keywords" content="目标管理,时间管理,极简主义,专注,每日计划,目标追踪,打卡工具,个人成长,效率工具,减法思维">
+    <meta name="author" content="FOCUS Team">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph 社交媒体优化 -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sangzhexianxian.github.io/focus/">
+    <meta property="og:title" content="FOCUS - 极简目标管理 | 只做最重要的事">
+    <meta property="og:description" content="在信息过载的时代，学会放弃比选择更重要。FOCUS帮你用减法思维找到真正重要的目标，每天专注一件事，持续成长。">
+    <meta property="og:image" content="https://sangzhexianxian.github.io/focus/og-image.png">
+    <meta property="og:site_name" content="FOCUS">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="FOCUS - 极简目标管理 | 只做最重要的事">
+    <meta name="twitter:description" content="在信息过载的时代，学会放弃比选择更重要。FOCUS帮你用减法思维找到真正重要的目标。">
+    <meta name="twitter:image" content="https://sangzhexianxian.github.io/focus/og-image.png">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://sangzhexianxian.github.io/focus/">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23667eea'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white' font-family='Arial'>🎯</text></svg>">
+
+    <!-- 结构化数据 -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "FOCUS",
+        "description": "极简目标管理工具，帮助你找到最重要的事",
+        "url": "https://sangzhexianxian.github.io/focus/",
+        "applicationCategory": "ProductivityApplication",
+        "operatingSystem": "Web",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "CNY"
+        },
+        "featureList": [
+            "目标管理",
+            "时间管理",
+            "每日专注",
+            "持续打卡",
+            "积分奖励"
+        ],
+        "creator": {
+            "@type": "Organization",
+            "name": "FOCUS Team"
+        }
+    }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {Uncaught SyntaxError: Identifier 'supabase' has already been declared (at index.html:1063:13)
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .user-info {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .user-avatar:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .user-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 5px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            min-width: 180px;
+            overflow: hidden;
+            display: none;
+            z-index: 100;
+        }
+
+        .user-menu.show {
+            display: block;
+        }
+
+        .user-menu-item {
+            padding: 12px 16px;
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-menu-item:hover {
+            background: #f0f0f0;
+        }
+
+        .user-menu-item.danger {
+            color: #dc3545;
+            border-top: 1px solid #eee;
+        }
+
+        /* 登录弹窗 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .login-modal {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-modal h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #667eea;
+            text-align: center;
+        }
+
+        .login-modal p {
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 15px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .login-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .toggle-auth {
+            text-align: center;
+            font-size: 14px;
+            color: #667eea;
+            cursor: pointer;
+            transition: opacity 0.3s;
+            margin-top: 15px;
+        }
+
+        .toggle-auth:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        .auth-divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+            color: #999;
+            font-size: 13px;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .auth-divider::before {
+            left: 0;
+        }
+
+        .auth-divider::after {
+            right: 0;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #999;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+
+        /* 积分弹窗 */
+        .points-modal {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 450px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        .points-modal h2 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #667eea;
+            text-align: center;
+        }
+
+        .points-modal h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        #dailyCheckInSection:hover {
+            background: #c3e6cb !important;
+            transform: scale(1.02);
+            transition: all 0.2s;
+        }
+
+        .achievement-item {
+            text-align: center;
+            padding: 15px 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            color: white;
+            font-size: 13px;
+        }
+
+        .achievement-item .icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .achievement-item .name {
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .achievement-item .desc {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+
+        .achievement-item.locked {
+            background: #e9ecef;
+            color: #999;
+        }
+
+        .sync-status {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.8);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            display: none;
+        }
+
+        .sync-status.show {
+            display: flex;
+        }
+
+        .sync-status .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ccc;
+        }
+
+        .sync-status.synced .dot {
+            background: #28a745;
+        }
+
+        .sync-status.syncing .dot {
+            background: #ffc107;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* 底部操作栏 */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            padding: 12px 20px;
+            z-index: 100;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+
+        .bottom-bar-content {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .bottom-bar .sync-status {
+            position: static;
+            display: flex;
+            color: #666;
+            font-size: 13px;
+        }
+
+        .bottom-bar .sync-status.show {
+            display: flex;
+        }
+
+        .bottom-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .bottom-btn {
+            padding: 8px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            background: #f8f9fa;
+            color: #333;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .bottom-btn:hover {
+            background: #e9ecef;
+            border-color: #ccc;
+        }
+
+        .bottom-btn.danger {
+            color: #dc3545;
+            border-color: #ffcdd2;
+            background: #fff5f5;
+        }
+
+        .bottom-btn.danger:hover {
+            background: #ffcdd2;
+        }
+
+        /* 为底部栏留出空间 */
+        .container {
+            margin-bottom: 60px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+
+        .demo-btn {
+            background: rgba(255,255,255,0.25);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.6);
+            padding: 10px 24px;
+            border-radius: 25px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .demo-btn:hover {
+            background: rgba(255,255,255,0.35);
+            border-color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        .step-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .step-desc {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .tip-box {
+            background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%);
+            border-left: 4px solid #667eea;
+            padding: 14px 18px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .input-area {
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 80px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .goals-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            min-height: 60px;
+        }
+
+        .goal-card {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            padding: 10px 20px;
+            font-size: 14px;
+            color: #667eea;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: cardAppear 0.4s ease-out;
+        }
+
+        .goal-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            background: linear-gradient(135deg, #667eea25 0%, #764ba225 100%);
+        }
+
+        .goal-card.removing {
+            animation: cardDisappear 0.3s ease-out forwards;
+        }
+
+        .goal-card .icon {
+            font-size: 16px;
+        }
+
+        .goal-card .remove-btn {
+            opacity: 0;
+            margin-left: 5px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .goal-card:hover .remove-btn {
+            opacity: 1;
+        }
+
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        @keyframes cardDisappear {
+            from {
+                opacity: 1;
+                transform: scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .empty-state .icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Toast 提示 */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: white;
+            padding: 16px 28px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast-icon {
+            font-size: 20px;
+        }
+
+        .toast.success .toast-icon { color: #28a745; }
+        .toast.success { border-left: 4px solid #28a745; }
+        .toast.error .toast-icon { color: #dc3545; }
+        .toast.error { border-left: 4px solid #dc3545; }
+        .toast.info .toast-icon { color: #667eea; }
+        .toast.info { border-left: 4px solid #667eea; }
+
+        /* 快捷按钮提示 */
+        .quick-tip {
+            text-align: center;
+            font-size: 13px;
+            color: #999;
+            margin-top: 10px;
+        }
+
+        .goals-list {
+            margin-bottom: 20px;
+        }
+
+        .goal-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        .goal-item:hover {
+            background: #e9ecef;
+        }
+
+        .goal-item:active {
+            transform: scale(0.98);
+            background: #e0e0e0;
+        }
+
+        .goal-item.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+        }
+
+        .goal-item.selected:active {
+            background: #e8edff;
+        }
+
+        .goal-item .checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .goal-item.selected .checkbox {
+            background: #667eea;
+            border-color: #667eea;
+        }
+
+        .goal-item.selected .checkbox::after {
+            content: '✓';
+            color: white;
+            font-size: 14px;
+        }
+
+        .goal-item .text {
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .weight-section {
+            margin-bottom: 20px;
+        }
+
+        .weight-item {
+            margin-bottom: 15px;
+        }
+
+        .weight-label {
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .weight-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .weight-slider {
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .weight-total {
+            text-align: center;
+            padding: 15px;
+            background: #f0f4ff;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .weight-total.valid {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .weight-total.invalid {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .card-preview {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .card-preview canvas {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .download-btn {
+            background: #28a745;
+        }
+
+        .download-btn:hover {
+            background: #218838;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .restart-btn {
+            background: #6c757d;
+            margin-left: 10px;
+        }
+
+        .restart-btn:hover {
+            background: #5a6268;
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+        }
+
+        /* 挑战按钮样式 */
+        .challenge-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .challenge-btn:hover {
+            background: linear-gradient(135deg, #5568d3 0%, #764ba2 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .selection-count {
+            text-align: center;
+            font-size: 14px;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .share-section {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .share-section h4 {
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+
+        .share-section p {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .copy-link-btn {
+            background: #6c757d;
+            font-size: 14px;
+            padding: 10px 20px;
+        }
+
+        .copy-link-btn:hover {
+            background: #5a6268;
+        }
+
+        .copy-success {
+            color: #28a745;
+            font-size: 13px;
+            margin-left: 10px;
+        }
+
+        .daily-checkin {
+            text-align: center;
+            padding: 15px;
+            background: #d4edda;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .daily-checkin h4 {
+            margin-bottom: 8px;
+            color: #155724;
+        }
+
+        .daily-checkin p {
+            font-size: 13px;
+            color: #155724;
+            margin-bottom: 10px;
+        }
+
+        .streak-count {
+            font-size: 24px;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 0;
+            }
+
+            .container {
+                border-radius: 0;
+                min-height: 100vh;
+                box-shadow: none;
+            }
+
+            .header {
+                padding: 20px 15px;
+            }
+
+            .header h1 {
+                font-size: 28px !important;
+                letter-spacing: 1px !important;
+            }
+
+            .header p {
+                font-size: 14px !important;
+            }
+
+            .user-info {
+                top: 10px;
+                right: 10px;
+                gap: 6px;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+                max-width: 70%;
+            }
+
+            .demo-btn {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+
+            #loggedInActions {
+                gap: 4px !important;
+            }
+
+            #loggedInActions .demo-btn {
+                padding: 6px 10px !important;
+                font-size: 11px !important;
+            }
+
+            .login-btn {
+                font-size: 13px;
+                padding: 8px 16px;
+            }
+
+            .user-avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+
+            .content {
+                padding: 20px 15px;
+            }
+
+            .step-title {
+                font-size: 18px;
+            }
+
+            .step-desc {
+                font-size: 13px;
+            }
+
+            .tip-box {
+                font-size: 13px;
+                padding: 12px 14px;
+            }
+
+            textarea {
+                font-size: 15px;
+                padding: 12px;
+            }
+
+            .goal-card {
+                font-size: 13px;
+                padding: 8px 16px;
+            }
+
+            .btn {
+                width: 100%;
+                font-size: 15px;
+                padding: 14px;
+            }
+
+            .card-preview canvas {
+                max-width: 100%;
+                height: auto !important;
+            }
+
+            .daily-checkin {
+                padding: 12px;
+            }
+
+            .streak-count {
+                font-size: 20px;
+            }
+
+            /* 优化选择列表在移动端的触摸体验 */
+            .goal-item {
+                padding: 16px 12px;
+                margin-bottom: 12px;
+                min-height: 56px;
+            }
+
+            .goal-item .checkbox {
+                width: 28px;
+                height: 28px;
+                margin-right: 14px;
+            }
+
+            .goal-item .text {
+                font-size: 15px;
+                line-height: 1.5;
+            }
+
+            .selection-count {
+                font-size: 16px;
+                padding: 10px;
+                background: rgba(102, 126, 234, 0.1);
+                border-radius: 8px;
+                margin-bottom: 15px;
+            }
+
+            /* 权重滑块在移动端的优化 */
+            .weight-slider {
+                height: 40px;
+                -webkit-appearance: none;
+                appearance: none;
+                background: #e0e0e0;
+                border-radius: 20px;
+                outline: none;
+            }
+
+            .weight-slider::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                cursor: pointer;
+                box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+            }
+
+            .weight-slider::-moz-range-thumb {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                cursor: pointer;
+                border: none;
+                box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+            }
+
+            .weight-item {
+                padding: 15px;
+                background: #f8f9fa;
+                border-radius: 12px;
+                margin-bottom: 15px;
+            }
+
+            .weight-label {
+                font-size: 15px;
+                font-weight: 500;
+                margin-bottom: 12px;
+            }
+
+            /* 重新选择按钮在移动端的优化 */
+            .btn.restart-btn {
+                font-size: 14px;
+                padding: 12px 20px;
+                flex: 1;
+                min-width: 140px;
+            }
+
+            /* 登录弹窗在移动端的优化 */
+            .login-modal {
+                padding: 30px 20px;
+                width: 95%;
+            }
+
+            .login-modal h2 {
+                font-size: 22px;
+            }
+
+            .form-group input {
+                padding: 14px;
+                font-size: 16px; /* 防止iOS缩放 */
+            }
+
+            .login-btn {
+                padding: 16px;
+                font-size: 16px;
+            }
+
+            /* 用户菜单在移动端的优化 */
+            .user-menu {
+                right: 10px;
+                min-width: 160px;
+            }
+
+            .user-menu-item {
+                padding: 14px 16px;
+                font-size: 15px;
+            }
+
+            /* 目标卡片在移动端的优化 */
+            .goals-cards {
+                gap: 8px;
+            }
+
+            .goal-card {
+                font-size: 14px;
+                padding: 10px 16px;
+                border-radius: 20px;
+            }
+
+            /* Toast提示在移动端的优化 */
+            .toast {
+                padding: 14px 20px;
+                font-size: 14px;
+                max-width: 90%;
+            }
+
+            /* 分享区域在移动端的优化 */
+            .share-section {
+                padding: 15px;
+            }
+
+            .share-section h4 {
+                font-size: 16px;
+            }
+
+            /* 每日打卡在移动端的优化 */
+            .daily-checkin {
+                padding: 20px 15px;
+            }
+
+            .daily-checkin h4 {
+                font-size: 16px;
+            }
+
+            #checkinBtn {
+                width: auto;
+                min-width: 120px;
+            }
+
+            /* 底部栏在移动端的优化 */
+            .bottom-bar {
+                padding: 10px 15px;
+            }
+
+            .bottom-bar-content {
+                gap: 10px;
+            }
+
+            .bottom-bar .sync-status {
+                font-size: 11px;
+                white-space: nowrap;
+            }
+
+            .bottom-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            .container {
+                margin-bottom: 55px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 style="font-size: 42px; font-weight: 900; letter-spacing: 2px; text-shadow: 0 4px 20px rgba(0,0,0,0.3);">FOCUS · 只做最重要的事</h1>
+            <p style="font-size: 16px; opacity: 0.95; font-weight: 500; letter-spacing: 1px; margin-top: 8px;">学会放弃，比选择更重要</p>
+        </div>
+
+        <div class="content">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <!-- Step 1: 输入所有目标 -->
+            <div class="step active" id="step1">
+                <div class="step-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <div class="step-title" style="margin-bottom: 0;">第一步：倒出所有目标</div>
+                    <button class="demo-btn" onclick="startDemo()" style="padding: 8px 16px; font-size: 13px;">▶ 看演示</button>
+                </div>
+                <div class="tip-box">
+                    💡 提示：不要筛选，不要排序，把脑子里所有想做的事情都写下来。每按一次回车，就会变成一张卡片。写完点击"我写完了"。
+                </div>
+                <div class="step-desc" id="step1Desc">
+                    把你2026年想做的所有事情都写下来，不限数量，不用排序。让大脑清空。
+                </div>
+                <div class="input-area">
+                    <textarea id="allGoals" placeholder="在这里输入你的目标，按回车键确认..."></textarea>
+                </div>
+                <div class="goals-cards" id="goalsCards">
+                    <div class="empty-state">
+                        <span class="icon">✨</span>
+                        在上面输入框中写下你的第一个目标
+                    </div>
+                </div>
+                <div style="text-align: center; margin-bottom: 20px; color: #999; font-size: 13px;">
+                    已记录 <span id="goalCount" style="color: #667eea; font-weight: bold;">0</span> 个目标
+                </div>
+                <div style="text-align: center;">
+                    <button class="btn" onclick="goToStep2()">我写完了，下一步</button>
+                </div>
+
+                <!-- 挑战模式入口 -->
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+                    <div style="text-align: center; margin-bottom: 15px;">
+                        <span style="font-size: 14px; color: #999;">🎯 想挑战不同专注模式？</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px;">
+                        <button class="challenge-btn" onclick="openChallenge('daily1')">📅 一天1件事</button>
+                        <button class="challenge-btn" onclick="openChallenge('daily3')">📅 一天3件事</button>
+                        <button class="challenge-btn" onclick="openChallenge('weekly3')">📆 一周3件事</button>
+                        <button class="challenge-btn" onclick="openChallenge('monthly3')">🗓️ 一月3件事</button>
+                        <button class="challenge-btn" onclick="openChallenge('yearly3')">🎯 2026年3件事</button>
+                        <button class="challenge-btn" onclick="openChallenge('oneLife')">⭐ 一生1件事</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: 选出5个 -->
+            <div class="step" id="step2">
+                <div class="step-title">第二步：选出最重要的5个</div>
+                <div class="tip-box">
+                    💡 提示：问自己一个问题：如果2026年只能完成5件事，我会选哪5个？
+                </div>
+                <div class="step-desc">
+                    从你刚才列出的目标中，选出5个"看起来很重要"的。这是第一轮筛选。
+                </div>
+                <div class="selection-count" id="step2Count">已选择 0/5</div>
+                <div class="goals-list" id="step2List"></div>
+                <div class="error-message" id="step2Error"></div>
+                <button class="btn" onclick="goToStep3()">下一步</button>
+            </div>
+
+            <!-- Step 3: 选出3个 -->
+            <div class="step" id="step3">
+                <div class="step-title">第三步：最终选出3个</div>
+                <div class="tip-box">
+                    💡 提示：这可能是最痛苦的一步。问自己：哪3个目标实现后，会让2026年无憾？
+                </div>
+                <div class="step-desc">
+                    从这5个目标中，只保留3个。这是残酷但必要的一步，其他的只能放弃。
+                </div>
+                <div class="selection-count" id="step3Count">已选择 0/3</div>
+                <div class="goals-list" id="step3List"></div>
+                <div class="error-message" id="step3Error"></div>
+                <button class="btn" onclick="goToStep4()">下一步</button>
+            </div>
+
+            <!-- Step 4: 分配权重 -->
+            <div class="step" id="step4">
+                <div class="step-title">第四步：分配权重</div>
+                <div class="tip-box">
+                    💡 提示：权重代表你的精力分配。50%的目标要投入一半的时间和注意力。
+                </div>
+                <div class="step-desc">
+                    给这3个目标分配权重，总和必须是100%。
+                </div>
+                <div class="weight-section" id="weightSection"></div>
+                <div class="weight-total" id="weightTotal">
+                    当前总和：0%
+                </div>
+                <div class="error-message" id="step4Error"></div>
+                <button class="btn" onclick="generateCard()">生成专注卡</button>
+            </div>
+
+            <!-- Step 5: 生成专注卡 -->
+            <div class="step" id="step5">
+                <div class="step-title">你的2026专注卡</div>
+                <div class="step-desc">
+                    把这张卡保存为手机壁纸，每天提醒自己：只做这三件事。
+                </div>
+                <div class="card-preview">
+                    <canvas id="focusCard"></canvas>
+                </div>
+                <div style="text-align: center;">
+                    <button class="btn download-btn" onclick="downloadCard()">下载专注卡</button>
+                </div>
+
+                <div class="daily-checkin" id="dailyCheckin">
+                    <h4>🔥 已连续专注 <span class="streak-count" id="streakCount">0</span> 天</h4>
+                    <p>每天回来打卡，保持专注惯性</p>
+                    <button class="btn" onclick="dailyCheckin()" id="checkinBtn">今日打卡</button>
+                </div>
+
+                <div style="text-align: center; margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 10px; border: 1px solid #ffc107;">
+                    <h4 style="color: #856404; margin-bottom: 10px;">💰 我的积分</h4>
+                    <div style="display: flex; gap: 20px; justify-content: center; align-items: center; flex-wrap: wrap;">
+                        <div>
+                            <span style="font-size: 24px; font-weight: bold; color: #f39c12;" id="step5TotalPoints">0</span>
+                            <span style="font-size: 13px; color: #856404;">总积分</span>
+                        </div>
+                        <div>
+                            <span id="step5UserLevel" style="font-weight: bold;">LV1 专注新手</span>
+                            <span style="font-size: 13px; color: #856404;">等级</span>
+                        </div>
+                        <div>
+                            <span style="font-weight: bold; color: #e74c3c;" id="step5Streak">连续0天</span>
+                            <span style="font-size: 13px; color: #856404;">签到</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px; font-size: 13px; color: #666;">
+                    <p style="margin-bottom: 8px;">💡 小提示：把这张专注卡设为手机壁纸</p>
+                    <p>每天睁开眼就能看到，时刻提醒自己</p>
+                </div>
+
+                <div class="share-section">
+                    <h4>📤 分享给你的朋友</h4>
+                    <p>让更多人用减法思维规划2026</p>
+                    <button class="btn copy-link-btn" onclick="copyShareLink()">复制链接</button>
+                    <span class="copy-success" id="copySuccess" style="display: none;">✓ 已复制</span>
+                    <p style="margin-top: 10px; font-size: 12px; color: #28a745;">分享获得 +15 积分</p>
+                </div>
+
+                <div style="text-align: center; margin-top: 15px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn restart-btn" onclick="goBackToSelect()">🔄 重新选择目标</button>
+                    <button class="btn restart-btn" onclick="restart()" style="background: #dc3545;">🗑️ 全部清空</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部操作栏 -->
+    <div class="bottom-bar" id="bottomBar">
+        <div class="bottom-bar-content">
+            <div class="sync-status" id="syncStatus">
+                <span class="dot"></span>
+                <span id="syncText">本地模式</span>
+            </div>
+            <div class="bottom-actions" style="display: flex; gap: 8px; align-items: center;">
+                <button class="bottom-btn" onclick="showPointsModal()" style="color: #f39c12; border-color: #f39c12;">
+                    <span style="margin-right: 4px;">💰</span>
+                    <span id="totalPoints">0</span>分
+                </button>
+                <button class="bottom-btn" id="bottomLoginBtn" onclick="showLoginModal()">👤 登录</button>
+                <div id="bottomLoggedInActions" style="display: none; gap: 8px;">
+                    <button class="bottom-btn" onclick="syncToCloud()">☁️ 同步</button>
+                    <button class="bottom-btn" onclick="viewProfile()">👤 资料</button>
+                    <button class="bottom-btn danger" onclick="logout()">🚪 退出</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 用户菜单（保留作为备用） -->
+    <div class="user-menu" id="userMenu">
+        <div class="user-menu-item" onclick="syncToCloud()">
+            <span>☁️</span>
+            <span id="syncMenuItem">立即同步</span>
+        </div>
+        <div class="user-menu-item" onclick="viewProfile()">
+            <span>👤</span>
+            <span>个人资料</span>
+        </div>
+        <div class="user-menu-item danger" onclick="logout()">
+            <span>🚪</span>
+            <span>退出登录</span>
+        </div>
+    </div>
+
+    <!-- 登录弹窗 -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="login-modal" style="position: relative;">
+            <button class="close-modal" onclick="hideLoginModal()">×</button>
+
+            <!-- 登录表单 -->
+            <div id="loginForm">
+                <h2>欢迎回来</h2>
+                <p>登录后自动同步你的专注目标</p>
+                <div class="form-group">
+                    <label>邮箱</label>
+                    <input type="email" id="loginEmail" placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••">
+                </div>
+                <button class="login-btn" onclick="handleLogin()" id="loginSubmitBtn">登录</button>
+
+                <div class="auth-divider">或</div>
+
+                <button class="login-btn" style="background: #24292e;" onclick="handleGuestLogin()">
+                    <span style="font-size: 16px;">👤</span>
+                    <span style="margin-left: 8px;">游客模式（本地存储）</span>
+                </button>
+
+                <div class="toggle-auth" onclick="showRegisterForm()">没有账号？立即注册</div>
+                <div style="text-align: center; margin-top: 10px; font-size: 12px; color: #999;">
+                    <a href="#" onclick="showForgotPassword()" style="color: #667eea;">忘记密码？</a>
+                </div>
+            </div>
+
+            <!-- 注册表单 -->
+            <div id="registerForm" style="display: none;">
+                <h2>创建账号</h2>
+                <p>注册后自动云端保存你的专注目标</p>
+                <div class="form-group">
+                    <label>邮箱</label>
+                    <input type="email" id="registerEmail" placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label>密码（至少6位）</label>
+                    <input type="password" id="registerPassword" placeholder="••••••••">
+                </div>
+                <div class="form-group">
+                    <label>确认密码</label>
+                    <input type="password" id="registerConfirmPassword" placeholder="••••••••">
+                </div>
+                <div class="form-group" style="display: flex; align-items: flex-start; gap: 8px;">
+                    <input type="checkbox" id="agreeTerms" style="margin-top: 3px;">
+                    <label for="agreeTerms" style="font-size: 13px; color: #666; cursor: pointer;">
+                        我已阅读并同意 <a href="#" style="color: #667eea; text-decoration: none;" onclick="event.preventDefault(); alert('服务条款内容...');">服务条款</a>
+                    </label>
+                </div>
+                <button class="login-btn" onclick="handleRegister()" id="registerSubmitBtn">注册</button>
+                <div class="toggle-auth" onclick="showLoginForm()">已有账号？去登录</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 积分弹窗 -->
+    <div class="modal-overlay" id="pointsModal">
+        <div class="points-modal">
+            <button class="close-modal" onclick="hidePointsModal()">×</button>
+
+            <h2>💰 我的积分</h2>
+
+            <!-- 积分概览 -->
+            <div style="display: flex; gap: 15px; justify-content: center; margin-bottom: 25px; flex-wrap: wrap;">
+                <div style="text-align: center; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; color: white; flex: 1; min-width: 100px;">
+                    <div style="font-size: 28px; font-weight: bold;" id="modalTotalPoints">0</div>
+                    <div style="font-size: 12px; opacity: 0.9;">总积分</div>
+                </div>
+                <div style="text-align: center; padding: 15px; background: #f39c12; border-radius: 10px; color: white; flex: 1; min-width: 100px;">
+                    <div id="modalUserLevel" style="font-weight: bold;">LV1 专注新手</div>
+                    <div style="font-size: 12px; opacity: 0.9;">当前等级</div>
+                </div>
+                <div style="text-align: center; padding: 15px; background: #e74c3c; border-radius: 10px; color: white; flex: 1; min-width: 100px;">
+                    <div style="font-size: 28px; font-weight: bold;" id="modalStreak">0</div>
+                    <div style="font-size: 12px; opacity: 0.9;">连续天数</div>
+                </div>
+            </div>
+
+            <!-- 等级进度 -->
+            <div style="margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; font-size: 13px; color: #666; margin-bottom: 5px;">
+                    <span>等级进度</span>
+                    <span id="levelProgress">0 / 100</span>
+                </div>
+                <div style="height: 8px; background: #e9ecef; border-radius: 4px; overflow: hidden;">
+                    <div id="levelProgressBar" style="height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); width: 0%; transition: width 0.3s;"></div>
+                </div>
+            </div>
+
+            <!-- 每日签到 -->
+            <div id="dailyCheckInSection" style="text-align: center; padding: 15px; background: #d4edda; border-radius: 8px; margin-bottom: 20px; cursor: pointer;" onclick="dailyCheckIn()">
+                <h4 style="margin-bottom: 8px; color: #155724;">📅 每日签到</h4>
+                <p style="margin: 0; font-size: 13px; color: #155724;">签到获得 +10 积分，连续签到有额外奖励</p>
+            </div>
+
+            <!-- 积分获取方式 -->
+            <div style="margin-bottom: 20px;">
+                <h4 style="margin-bottom: 10px; color: #333;">🎯 积分获取</h4>
+                <div style="display: grid; gap: 10px;">
+                    <div style="display: flex; justify-content: space-between; padding: 10px; background: #f8f9fa; border-radius: 5px; font-size: 13px;">
+                        <span>每日签到</span>
+                        <span style="color: #28a745; font-weight: bold;">+10</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 10px; background: #f8f9fa; border-radius: 5px; font-size: 13px;">
+                        <span>完成专注卡</span>
+                        <span style="color: #28a745; font-weight: bold;">+50</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 10px; background: #f8f9fa; border-radius: 5px; font-size: 13px;">
+                        <span>分享专注卡</span>
+                        <span style="color: #28a745; font-weight: bold;">+15</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 10px; background: #f8f9fa; border-radius: 5px; font-size: 13px;">
+                        <span>连续7天</span>
+                        <span style="color: #f39c12; font-weight: bold;">+20</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 10px; background: #f8f9fa; border-radius: 5px; font-size: 13px;">
+                        <span>连续30天</span>
+                        <span style="color: #e74c3c; font-weight: bold;">+30</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 成就展示 -->
+            <div id="achievementsSection">
+                <h4 style="margin-bottom: 10px; color: #333;">🏆 我的成就</h4>
+                <div id="achievementsList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px;">
+                    <!-- 成就会动态加载 -->
+                    <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px; color: #999; font-size: 13px; grid-column: 1 / -1;">
+                        暂无成就
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 容器 -->
+    <div class="toast" id="toast">
+        <span class="toast-icon" id="toastIcon">✓</span>
+        <span id="toastMessage">操作成功</span>
+    </div>
+
+    <script>
+        // Supabase 配置
+        const SUPABASE_URL = 'https://klywwizwconvwjifzrcw.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_65tNpTMzDgY8PFEQxIS-Eg_0tXESrkV';
+
+        // 初始化 Supabase 客户端
+        let supabaseClient = null;
+        try {
+            if (window.supabase && window.supabase.createClient) {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                console.log('Supabase 初始化成功');
+            } else {
+                console.log('Supabase 库未加载');
+            }
+        } catch (e) {
+            console.error('Supabase 初始化失败:', e);
+        }
+
+        // 数据存储
+        let allGoalsList = [];
+        let top5Goals = [];
+        let top3Goals = [];
+        let weights = [0, 0, 0];
+        let isDemoRunning = false;
+        let audioContext = null;
+        let currentUser = null;
+        let isCloudMode = false;
+        let currentChallengeMode = 'yearly3'; // 默认模式
+
+        // ===== 积分系统 =====
+        let userPoints = {
+            total: 0,
+            level: 1,
+            checkInStreak: 0,
+            lastCheckInDate: null,
+            achievements: [],
+            history: []
+        };
+
+        // 等级配置
+        const levelConfig = {
+            1: { name: '专注新手', points: 0, color: '#95a5a6' },
+            2: { name: '专注达人', points: 100, color: '#3498db' },
+            3: { name: '专注高手', points: 500, color: '#9b59b6' },
+            4: { name: '专注大师', points: 1000, color: '#f39c12' },
+            5: { name: '专注王者', points: 3000, color: '#e74c3c' },
+            6: { name: '专注传奇', points: 10000, color: '#f1c40f' }
+        };
+
+        // 成就配置
+        const achievementConfig = {
+            firstCard: { name: '初入专注', desc: '完成第1张专注卡', points: 20, icon: '🌟' },
+            dailyCheckIn: { name: '每日打卡', desc: '连续签到7天', points: 50, icon: '📅' },
+            monthStreak: { name: '一月坚持', desc: '连续完成30天', points: 200, icon: '🔥' },
+            hundredDays: { name: '百日筑基', desc: '连续完成100天', points: 500, icon: '💎' },
+            yearAchievement: { name: '一年成就', desc: '连续完成365天', points: 1000, icon: '🏆' },
+            shareMaster: { name: '分享达人', desc: '分享专注卡10次', points: 100, icon: '📤' },
+            goalsCompleted: { name: '目标达成', desc: '完成所有设定的目标', points: 100, icon: '✅' }
+        };
+
+        // 获取积分
+        function addPoints(points, reason) {
+            userPoints.total += points;
+            userPoints.history.unshift({
+                points: points,
+                reason: reason,
+                date: new Date().toISOString()
+            });
+
+            // 更新等级
+            updateLevel();
+
+            // 保存到本地
+            localStorage.setItem('focus2026_points', JSON.stringify(userPoints));
+
+            // 显示提示
+            if (points > 0) {
+                showToast(`+${points}分 | ${reason}`, 'success');
+            }
+
+            // 同步到云端
+            if (isCloudMode && currentUser) {
+                syncPointsToCloud();
+            }
+        }
+
+        // 消耗积分
+        function usePoints(points, reason) {
+            if (userPoints.total < points) {
+                showToast('积分不足', 'error');
+                return false;
+            }
+
+            userPoints.total -= points;
+            userPoints.history.unshift({
+                points: -points,
+                reason: reason,
+                date: new Date().toISOString()
+            });
+
+            // 更新等级
+            updateLevel();
+
+            // 保存到本地
+            localStorage.setItem('focus2026_points', JSON.stringify(userPoints));
+
+            // 显示提示
+            showToast(`-${points}分 | ${reason}`, 'info');
+
+            // 同步到云端
+            if (isCloudMode && currentUser) {
+                syncPointsToCloud();
+            }
+
+            return true;
+        }
+
+        // 更新等级
+        function updateLevel() {
+            let newLevel = 1;
+            for (let level = 6; level >= 1; level--) {
+                if (userPoints.total >= levelConfig[level].points) {
+                    newLevel = level;
+                    break;
+                }
+            }
+
+            // 如果等级提升，显示通知
+            if (newLevel > userPoints.level) {
+                userPoints.level = newLevel;
+                showToast(`恭喜升级！获得「${levelConfig[newLevel].name}」称号`, 'success');
+            }
+        }
+
+        // 每日签到
+        function dailyCheckIn() {
+            const today = new Date().toDateString();
+            const yesterday = new Date(Date.now() - 86400000).toDateString();
+
+            if (userPoints.lastCheckInDate === today) {
+                showToast('今日已签到', 'info');
+                return;
+            }
+
+            // 计算连续签到
+            if (userPoints.lastCheckInDate === yesterday) {
+                userPoints.checkInStreak++;
+            } else {
+                userPoints.checkInStreak = 1;
+            }
+
+            userPoints.lastCheckInDate = today;
+
+            // 基础签到积分
+            let points = 10;
+
+            // 连续签到奖励
+            if (userPoints.checkInStreak >= 100) {
+                points += 30;
+                addAchievement('hundredDays');
+            } else if (userPoints.checkInStreak >= 30) {
+                points += 20;
+                addAchievement('monthStreak');
+            } else if (userPoints.checkInStreak >= 7) {
+                points += 10;
+                addAchievement('dailyCheckIn');
+            }
+
+            addPoints(points, '每日签到');
+        }
+
+        // 添加成就
+        function addAchievement(achievementId) {
+            if (!userPoints.achievements.includes(achievementId)) {
+                userPoints.achievements.push(achievementId);
+                const achievement = achievementConfig[achievementId];
+                addPoints(achievement.points, `解锁成就：${achievement.name}`);
+                showToast(`🏆 解锁成就：${achievement.name}`, 'success');
+            }
+        }
+
+        // 同步积分到云端
+        async function syncPointsToCloud() {
+            if (!supabaseClient || !currentUser) return;
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('user_points')
+                    .upsert({
+                        user_id: currentUser.id,
+                        total_points: userPoints.total,
+                        level: userPoints.level,
+                        check_in_streak: userPoints.checkInStreak,
+                        last_check_in_date: userPoints.lastCheckInDate,
+                        achievements: userPoints.achievements,
+                        points_history: userPoints.history.slice(0, 100) // 只保留最近100条
+                    }, {
+                        onConflict: 'user_id'
+                    });
+
+                if (error) throw error;
+
+                // 更新排行榜
+                await updateLeaderboard();
+            } catch (error) {
+                console.error('同步积分失败:', error);
+            }
+        }
+
+        // 更新排行榜
+        async function updateLeaderboard() {
+            if (!supabaseClient || !currentUser) return;
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('points_leaderboard')
+                    .upsert({
+                        user_id: currentUser.id,
+                        total_points: userPoints.total,
+                        level: userPoints.level,
+                        check_in_streak: userPoints.checkInStreak
+                    }, {
+                        onConflict: 'user_id'
+                    });
+
+                if (error) throw error;
+            } catch (error) {
+                console.error('更新排行榜失败:', error);
+            }
+        }
+
+        // 从本地加载积分
+        function loadPointsFromLocal() {
+            const pointsData = localStorage.getItem('focus2026_points');
+            if (pointsData) {
+                userPoints = JSON.parse(pointsData);
+                updatePointsDisplay();
+            }
+        }
+
+        // 更新积分显示
+        function updatePointsDisplay() {
+            const pointsEl = document.getElementById('totalPoints');
+            const levelEl = document.getElementById('userLevel');
+            const streakEl = document.getElementById('checkInStreak');
+
+            // 底部栏显示
+            if (pointsEl) pointsEl.textContent = userPoints.total;
+
+            // Step 5 显示
+            const step5PointsEl = document.getElementById('step5TotalPoints');
+            const step5LevelEl = document.getElementById('step5UserLevel');
+            const step5StreakEl = document.getElementById('step5Streak');
+
+            if (step5PointsEl) step5PointsEl.textContent = userPoints.total;
+            if (step5LevelEl) {
+                const levelInfo = levelConfig[userPoints.level];
+                step5LevelEl.textContent = `LV${userPoints.level} ${levelInfo.name}`;
+                step5LevelEl.style.color = levelInfo.color;
+            }
+            if (step5StreakEl) step5StreakEl.textContent = `连续${userPoints.checkInStreak}天`;
+
+            if (levelEl) {
+                const levelInfo = levelConfig[userPoints.level];
+                levelEl.textContent = `LV${userPoints.level} ${levelInfo.name}`;
+                levelEl.style.color = levelInfo.color;
+            }
+            if (streakEl) streakEl.textContent = `连续${userPoints.checkInStreak}天`;
+        }
+
+        // ===== 全局函数定义（确保在所有位置都可用）=====
+
+        // 处理输入框按键
+        function handleInputKeydown(event) {
+            console.log('键盘事件触发:', event.key, event.code, event.keyCode);
+            if (event.key === 'Enter' && !event.shiftKey) {
+                console.log('检测到Enter键，准备添加目标');
+                event.preventDefault();
+                const textarea = document.getElementById('allGoals');
+                const text = textarea.value.trim();
+
+                console.log('输入内容:', text);
+                if (text.length > 0) {
+                    console.log('调用 addGoalCard');
+                    addGoalCard(text);
+                    textarea.value = '';
+                    textarea.focus();
+                }
+            }
+        }
+
+        // ===== 音效系统 =====
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+        }
+
+        // 打字音效 - 清脆的气泡声
+        function playTypingSound() {
+            initAudio();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.frequency.setValueAtTime(800 + Math.random() * 200, audioContext.currentTime);
+            oscillator.type = 'sine';
+
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.1);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.1);
+        }
+
+        // 卡片出现音效 - 柔和的确认声
+        function playCardSound() {
+            initAudio();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
+            oscillator.frequency.exponentialRampToValueAtTime(783.99, audioContext.currentTime + 0.1); // G5
+            oscillator.type = 'sine';
+
+            gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.3);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.3);
+        }
+
+        // 释放音效 - 舒缓的和弦
+        function playReleaseSound() {
+            initAudio();
+            const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+
+            notes.forEach((freq, index) => {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+
+                oscillator.frequency.setValueAtTime(freq, audioContext.currentTime + index * 0.05);
+                oscillator.type = 'sine';
+
+                const startTime = audioContext.currentTime + index * 0.05;
+                gainNode.gain.setValueAtTime(0, startTime);
+                gainNode.gain.linearRampToValueAtTime(0.1, startTime + 0.1);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 1.5);
+
+                oscillator.start(startTime);
+                oscillator.stop(startTime + 1.5);
+            });
+        }
+
+        // 选择音效 - 清脆的确认音
+        function playSelectSound() {
+            initAudio();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.frequency.setValueAtTime(880, audioContext.currentTime); // A5
+            oscillator.frequency.exponentialRampToValueAtTime(1760, audioContext.currentTime + 0.1); // A6
+            oscillator.type = 'sine';
+
+            gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.2);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.2);
+        }
+
+        // 取消选择音效 - 低沉的取消音
+        function playDeselectSound() {
+            initAudio();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.frequency.setValueAtTime(440, audioContext.currentTime); // A4
+            oscillator.frequency.exponentialRampToValueAtTime(220, audioContext.currentTime + 0.1); // A3
+            oscillator.type = 'sine';
+
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.15);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.15);
+        }
+
+        // 错误/限制音效 - 提示音
+        function playErrorSound() {
+            initAudio();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+            oscillator.type = 'sawtooth';
+
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.1);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.1);
+        }
+
+        // 渲染目标卡片
+        // 添加目标卡片
+        function addGoalCard(text) {
+            console.log('addGoalCard 被调用:', text);
+            playCardSound();
+
+            const icons = ['🎯', '💪', '📚', '🏃', '💼', '🚀', '✨', '🌟', '🔥', '💎'];
+            const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+
+            const goal = {
+                id: Date.now() + Math.random(),
+                text: text,
+                icon: randomIcon,
+                selected: false
+            };
+
+            console.log('添加目标:', goal);
+            allGoalsList.push(goal);
+            console.log('当前目标列表长度:', allGoalsList.length);
+            renderGoalCards();
+            updateGoalCount();
+            console.log('addGoalCard 执行完成');
+        }
+
+        function renderGoalCards() {
+            const container = document.getElementById('goalsCards');
+
+            if (allGoalsList.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <span class="icon">✨</span>
+                        在上面输入框中写下你的第一个目标
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+
+            allGoalsList.forEach((goal, index) => {
+                const card = document.createElement('div');
+                card.className = 'goal-card';
+                card.style.animationDelay = `${index * 0.05}s`;
+                card.innerHTML = `
+                    <span class="icon">${goal.icon}</span>
+                    <span class="text">${escapeHtml(goal.text)}</span>
+                    <span class="remove-btn" onclick="removeGoalCard(${index})">✕</span>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // 删除目标卡片
+        function removeGoalCard(index) {
+            const cards = document.querySelectorAll('.goal-card');
+            if (cards[index]) {
+                cards[index].classList.add('removing');
+                setTimeout(() => {
+                    allGoalsList.splice(index, 1);
+                    renderGoalCards();
+                    updateGoalCount();
+                }, 300);
+            }
+        }
+
+        // 更新目标计数
+        function updateGoalCount() {
+            document.getElementById('goalCount').textContent = allGoalsList.length;
+        }
+        function loadFromStorage() {
+            const saved = localStorage.getItem('focus2026_data');
+            if (saved) {
+                const data = JSON.parse(saved);
+                if (data.step) {
+                    allGoalsList = data.allGoalsList || [];
+                    top5Goals = data.top5Goals || [];
+                    top3Goals = data.top3Goals || [];
+                    weights = data.weights || [0, 0, 0];
+
+                    // 恢复到对应步骤
+                    if (data.step >= 1) {
+                        goToStep(1);
+                        updateProgress(20);
+                        renderGoalCards();
+                        updateGoalCount();
+                    }
+                    if (data.step >= 2) {
+                        goToStep(2);
+                        updateProgress(40);
+                        renderStep2List();
+                    }
+                    if (data.step >= 3) {
+                        goToStep(3);
+                        updateProgress(60);
+                        renderStep3List();
+                    }
+                    if (data.step >= 4) {
+                        goToStep(4);
+                        updateProgress(80);
+                        renderWeightSection();
+                    }
+                    if (data.step >= 5) {
+                        goToStep(5);
+                        updateProgress(100);
+                        generateCard();
+                        loadStreakData();
+                    }
+                }
+            } else {
+                updateProgress(20);
+            }
+        }
+
+        // 保存到本地存储
+        function saveToStorage(step) {
+            const data = {
+                step: step,
+                allGoalsList: allGoalsList,
+                top5Goals: top5Goals,
+                top3Goals: top3Goals,
+                weights: weights
+            };
+            localStorage.setItem('focus2026_data', JSON.stringify(data));
+        }
+
+        // 更新进度条
+        function updateProgress(percent) {
+            document.getElementById('progressFill').style.width = percent + '%';
+        }
+
+        // 切换步骤
+        function goToStep(stepNum) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById('step' + stepNum).classList.add('active');
+        }
+
+        // Toast 提示函数
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toastIcon');
+            const msg = document.getElementById('toastMessage');
+
+            toast.className = 'toast ' + type;
+            msg.textContent = message;
+
+            if (type === 'success') icon.textContent = '✓';
+            else if (type === 'error') icon.textContent = '✕';
+            else icon.textContent = 'ℹ';
+
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Step 1 -> Step 2
+        function goToStep2() {
+            if (allGoalsList.length === 0) {
+                showToast('请至少输入一个目标', 'error');
+                return;
+            }
+
+            playReleaseSound();
+
+            saveToStorage(1);
+            goToStep(2);
+            updateProgress(40);
+            renderStep2List();
+
+            // 如果是演示模式，继续后续步骤
+            if (isDemoRunning && window.demoStep2) {
+                window.demoStep2();
+            }
+        }
+
+        // 渲染Step 2列表
+        function renderStep2List() {
+            const container = document.getElementById('step2List');
+            container.innerHTML = '';
+
+            allGoalsList.forEach(goal => {
+                const item = document.createElement('div');
+                item.className = 'goal-item' + (goal.selected ? ' selected' : '');
+                item.onclick = () => toggleStep2Goal(goal.id);
+                item.innerHTML = `
+                    <div class="checkbox"></div>
+                    <div class="text">${escapeHtml(goal.text)}</div>
+                `;
+                container.appendChild(item);
+            });
+
+            updateStep2Count();
+        }
+
+        // 切换Step 2选中状态
+        function toggleStep2Goal(id) {
+            if (isDemoRunning) return;
+
+            const goal = allGoalsList.find(g => g.id === id);
+            if (goal) {
+                const selectedCount = allGoalsList.filter(g => g.selected).length;
+                if (!goal.selected && selectedCount >= 5) {
+                    playErrorSound();
+                    return;
+                }
+                goal.selected = !goal.selected;
+                if (goal.selected) {
+                    playSelectSound();
+                } else {
+                    playDeselectSound();
+                }
+                renderStep2List();
+            }
+        }
+
+        // 更新Step 2选择计数
+        function updateStep2Count() {
+            const count = allGoalsList.filter(g => g.selected).length;
+            document.getElementById('step2Count').textContent = `已选择 ${count}/5`;
+        }
+
+        // Step 2 -> Step 3
+        function goToStep3() {
+            const selected = allGoalsList.filter(g => g.selected);
+            const modeConfig = challengeModes[currentChallengeMode] || challengeModes['yearly3'];
+
+            // 如果选中的数量不足5个，但至少有1个，允许继续
+            if (selected.length === 0) {
+                document.getElementById('step2Error').textContent = '请至少选择1个目标';
+                return;
+            }
+
+            // 如果是默认模式，要求至少选择5个
+            if (currentChallengeMode === 'yearly3' && selected.length < 5) {
+                document.getElementById('step2Error').textContent = '请至少选择5个目标';
+                return;
+            }
+
+            document.getElementById('step2Error').textContent = '';
+
+            // 如果选中的数量不足5个，显示提示
+            if (selected.length < 5) {
+                showToast(`已选择${selected.length}个目标，继续进入下一步`, 'info');
+            }
+
+            top5Goals = selected.map(g => ({ ...g, selected: false }));
+            saveToStorage(2);
+            goToStep(3);
+            updateProgress(60);
+            renderStep3List();
+        }
+
+        // 渲染Step 3列表
+        function renderStep3List() {
+            const container = document.getElementById('step3List');
+            container.innerHTML = '';
+
+            top5Goals.forEach(goal => {
+                const item = document.createElement('div');
+                item.className = 'goal-item' + (goal.selected ? ' selected' : '');
+                item.onclick = () => toggleStep3Goal(goal.id);
+                item.innerHTML = `
+                    <div class="checkbox"></div>
+                    <div class="text">${escapeHtml(goal.text)}</div>
+                `;
+                container.appendChild(item);
+            });
+
+            updateStep3Count();
+        }
+
+        // 切换Step 3选中状态
+        function toggleStep3Goal(id) {
+            if (isDemoRunning) return;
+
+            const goal = top5Goals.find(g => g.id === id);
+            if (goal) {
+                const selectedCount = top5Goals.filter(g => g.selected).length;
+                if (!goal.selected && selectedCount >= 3) {
+                    playErrorSound();
+                    return;
+                }
+                goal.selected = !goal.selected;
+                if (goal.selected) {
+                    playSelectSound();
+                } else {
+                    playDeselectSound();
+                }
+                renderStep3List();
+            }
+        }
+
+        // 更新Step 3选择计数
+        function updateStep3Count() {
+            const count = top5Goals.filter(g => g.selected).length;
+            document.getElementById('step3Count').textContent = `已选择 ${count}/3`;
+        }
+
+        // Step 3 -> Step 4
+        function goToStep4() {
+            const selected = top5Goals.filter(g => g.selected);
+            const modeConfig = challengeModes[currentChallengeMode] || challengeModes['yearly3'];
+
+            // 如果选中的数量为0，不能继续
+            if (selected.length === 0) {
+                document.getElementById('step3Error').textContent = '请至少选择1个目标';
+                return;
+            }
+
+            // 如果选中的数量不足3个，允许继续
+            if (selected.length < 3) {
+                document.getElementById('step3Error').textContent = '';
+                showToast(`已选择${selected.length}个目标，继续进入下一步`, 'info');
+            } else {
+                document.getElementById('step3Error').textContent = '';
+            }
+
+            top3Goals = selected.map((g, index) => ({ ...g, weight: 0 }));
+
+            // 初始化权重数组，根据选中的数量
+            weights = new Array(selected.length).fill(0);
+            saveToStorage(3);
+            goToStep(4);
+            updateProgress(80);
+            renderWeightSection();
+        }
+
+        // 渲染权重分配区域
+        function renderWeightSection() {
+            const container = document.getElementById('weightSection');
+            container.innerHTML = '';
+
+            top3Goals.forEach((goal, index) => {
+                const item = document.createElement('div');
+                item.className = 'weight-item';
+                item.innerHTML = `
+                    <div class="weight-label">${escapeHtml(goal.text)}</div>
+                    <input type="range" class="weight-slider" min="0" max="100" step="5" value="${weights[index]}"
+                        oninput="updateWeight(${index}, this.value)">
+                    <div style="text-align: center; margin-top: 5px; font-weight: bold; color: #667eea;">
+                        ${weights[index]}%
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+
+            updateWeightTotal();
+        }
+
+        // 更新权重
+        function updateWeight(index, value) {
+            if (isDemoRunning) return;
+
+            weights[index] = parseInt(value);
+            renderWeightSection();
+            updateWeightTotal();
+        }
+
+        // 更新权重总和显示
+        function updateWeightTotal() {
+            const total = weights.reduce((a, b) => a + b, 0);
+            const totalEl = document.getElementById('weightTotal');
+            totalEl.textContent = `当前总和：${total}%`;
+
+            if (total === 100) {
+                totalEl.className = 'weight-total valid';
+                document.getElementById('step4Error').textContent = '';
+            } else {
+                totalEl.className = 'weight-total invalid';
+                document.getElementById('step4Error').textContent = '权重总和必须是100%';
+            }
+        }
+
+        // Step 4 -> Step 5: 生成专注卡
+        function generateCard() {
+            const total = weights.reduce((a, b) => a + b, 0);
+            if (total !== 100) {
+                showToast('权重总和必须是100%', 'error');
+                return;
+            }
+
+            saveToStorage(4);
+            goToStep(5);
+            updateProgress(100);
+
+            // 绘制Canvas - 9:16 比例，适合手机壁纸
+            const canvas = document.getElementById('focusCard');
+            const ctx = canvas.getContext('2d');
+
+            // 手机壁纸标准尺寸 1080x1920
+            canvas.width = 1080;
+            canvas.height = 1920;
+
+            // 安全区域（避开状态栏和底部导航）
+            const safeTop = 120;
+            const safeBottom = 180;
+
+            // 绘制渐变背景
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(0.5, '#764ba2');
+            gradient.addColorStop(1, '#f093fb');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 添加装饰性圆形
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+            ctx.beginPath();
+            ctx.arc(canvas.width * 0.85, canvas.height * 0.15, 350, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(canvas.width * 0.15, canvas.height * 0.85, 280, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(canvas.width * 0.5, canvas.height * 0.5, 500, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 顶部标题区域 - 根据挑战模式动态显示
+            const modeConfig = challengeModes[currentChallengeMode] || challengeModes['yearly3'];
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 100px -apple-system, BlinkMacSystemFont, Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
+            ctx.shadowBlur = 20;
+            ctx.shadowOffsetY = 10;
+            ctx.fillText(modeConfig.year, canvas.width / 2, safeTop + 100);
+
+            ctx.shadowColor = 'transparent';
+            ctx.font = '500 42px -apple-system, BlinkMacSystemFont, Arial, sans-serif';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.fillText(modeConfig.displayTitle, canvas.width / 2, safeTop + 170);
+
+            // 添加装饰线
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2 - 100, safeTop + 200);
+            ctx.lineTo(canvas.width / 2 + 100, safeTop + 200);
+            ctx.stroke();
+
+            // 计算卡片布局
+            const cardStartY = safeTop + 280;
+            const cardHeight = 380;
+            const cardGap = 40;
+            const cardMargin = 60;
+
+            top3Goals.forEach((goal, index) => {
+                const y = cardStartY + index * (cardHeight + cardGap);
+
+                // 绘制卡片阴影
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+                ctx.beginPath();
+                ctx.roundRect(cardMargin + 5, y + 5, canvas.width - cardMargin * 2, cardHeight, 25);
+                ctx.fill();
+
+                // 绘制卡片背景
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.98)';
+                ctx.beginPath();
+                ctx.roundRect(cardMargin, y, canvas.width - cardMargin * 2, cardHeight, 25);
+                ctx.fill();
+
+                // 绘制权重标签（圆形背景）
+                const weightSize = 90;
+                const weightX = cardMargin + 50;
+                const weightY = y + 50;
+
+                // 权重圆形渐变背景
+                const weightGradient = ctx.createLinearGradient(weightX, weightY, weightX + weightSize, weightY + weightSize);
+                weightGradient.addColorStop(0, '#667eea');
+                weightGradient.addColorStop(1, '#764ba2');
+                ctx.fillStyle = weightGradient;
+                ctx.beginPath();
+                ctx.arc(weightX + weightSize/2, weightY + weightSize/2, weightSize/2, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 权重文字
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 36px -apple-system, BlinkMacSystemFont, Arial, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(`${weights[index]}%`, weightX + weightSize/2, weightY + weightSize/2);
+
+                // 目标文字
+                ctx.fillStyle = '#333';
+                ctx.font = 'bold 44px -apple-system, BlinkMacSystemFont, Arial, sans-serif';
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'alphabetic';
+
+                const textX = weightX + weightSize + 35;
+                const textY = y + 90;
+                const maxWidth = canvas.width - cardMargin * 2 - textX - 30;
+                const lineHeight = 65;
+                const text = goal.text;
+                const words = text.split('');
+                let line = '';
+                let lineCount = 0;
+                const maxLines = 3;
+
+                for (let i = 0; i < words.length && lineCount < maxLines; i++) {
+                    const testLine = line + words[i];
+                    const metrics = ctx.measureText(testLine);
+                    if (metrics.width > maxWidth && line.length > 0) {
+                        ctx.fillText(line, textX, textY + lineCount * lineHeight);
+                        line = words[i];
+                        lineCount++;
+                    } else {
+                        line = testLine;
+                    }
+                }
+                if (line.length > 0 && lineCount < maxLines) {
+                    ctx.fillText(line, textX, textY + lineCount * lineHeight);
+                }
+
+                // 序号
+                ctx.fillStyle = 'rgba(102, 126, 234, 0.2)';
+                ctx.font = 'bold 120px -apple-system, BlinkMacSystemFont, Arial, sans-serif';
+                ctx.textAlign = 'right';
+                ctx.fillText(`${index + 1}`, canvas.width - cardMargin - 30, y + 130);
+            });
+
+            // 底部标语
+            const bottomY = canvas.height - safeBottom - 80;
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.font = 'italic 40px -apple-system, BlinkMacSystemFont, Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('其他的，让它们去吧', canvas.width / 2, bottomY);
+
+            // 添加日期
+            const now = new Date();
+            const dateStr = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')}`;
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.font = '28px -apple-system, BlinkMacSystemFont, Arial, sans-serif';
+            ctx.fillText(dateStr, canvas.width / 2, bottomY + 50);
+
+            saveToStorage(5);
+            loadStreakData();
+
+            // 完成专注卡奖励
+            const firstCardKey = 'focus2026_first_card_completed';
+            if (!localStorage.getItem(firstCardKey)) {
+                addPoints(50, '完成专注卡');
+                addAchievement('firstCard');
+                localStorage.setItem(firstCardKey, 'true');
+            } else {
+                addPoints(50, '完成专注卡');
+            }
+
+            updatePointsDisplay();
+        }
+
+        // 下载专注卡
+        function downloadCard() {
+            const canvas = document.getElementById('focusCard');
+            const link = document.createElement('a');
+            link.download = '2026专注卡.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+
+            showToast('专注卡已下载，设为壁纸吧！', 'success');
+        }
+
+        // 重新开始
+        function restart() {
+            if (confirm('确定要重新开始吗？当前进度将被清除。')) {
+                localStorage.removeItem('focus2026_data');
+                localStorage.removeItem('focus2026_streak');
+                location.reload();
+            }
+        }
+
+        // 挑战模式配置
+        const challengeModes = {
+            daily1: { name: '一天1件事', year: '2026', displayTitle: '一天，只做一件事', count: 1, unit: '天', icon: '📅' },
+            daily3: { name: '一天3件事', year: '2026', displayTitle: '一天，只做三件事', count: 3, unit: '天', icon: '📅' },
+            weekly3: { name: '一周3件事', year: '2026', displayTitle: '一周，只做三件事', count: 3, unit: '周', icon: '📆' },
+            monthly3: { name: '一月3件事', year: '2026', displayTitle: '一月，只做三件事', count: 3, unit: '月', icon: '🗓️' },
+            yearly3: { name: '2026年3件事', year: '2026', displayTitle: '这一年，只做三件事', count: 3, unit: '年', icon: '🎯' },
+            oneLife: { name: '一生1件事', year: '一生', displayTitle: '一生，只做一件事', count: 1, unit: '一生', icon: '⭐' }
+        };
+
+        // 打开挑战模式
+        function openChallenge(mode) {
+            const config = challengeModes[mode];
+            currentChallengeMode = mode; // 保存当前选中的模式
+            const input = document.getElementById('allGoals');
+            const placeholder = config.count === 1
+                ? `输入你要专注的1件事（${config.unit}）...`
+                : `输入你要专注的${config.count}件事（${config.unit}），每行一个...`;
+
+            input.placeholder = placeholder;
+            input.rows = config.count > 3 ? '4' : '3';
+            input.style.display = 'block';
+            input.value = '';
+
+            // 更新Step 1描述文字
+            updateStep1Description();
+
+            // 隐藏其他步骤，只显示输入
+            document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+            document.getElementById('step1').classList.add('active');
+
+            // 清空现有数据
+            allGoalsList = [];
+            top5Goals = [];
+            top3Goals = [];
+            weights = [0, 0, 0];
+
+            saveToStorage(0);
+            goToStep(1);
+            updateProgress(20);
+            updateGoalCount();
+
+            // 滚动到输入框
+            input.scrollIntoView({ behavior: 'smooth' });
+            input.focus();
+
+            playSelectSound();
+            showToast(`已切换到${config.name}模式`, 'info');
+        }
+
+        // 更新Step 1描述文字
+        function updateStep1Description() {
+            const descEl = document.getElementById('step1Desc');
+            const modeConfig = challengeModes[currentChallengeMode] || challengeModes['yearly3'];
+
+            // 根据模式生成对应的描述文字
+            let timeText = '';
+            switch (currentChallengeMode) {
+                case 'daily1':
+                case 'daily3':
+                    timeText = '今天';
+                    break;
+                case 'weekly3':
+                    timeText = '这周';
+                    break;
+                case 'monthly3':
+                    timeText = '这个月';
+                    break;
+                case 'yearly3':
+                    timeText = '2026年';
+                    break;
+                case 'oneLife':
+                    timeText = '一生';
+                    break;
+                default:
+                    timeText = '2026年';
+            }
+
+            descEl.textContent = `把你${timeText}想做的所有事情都写下来，不限数量，不用排序。让大脑清空。`;
+        }
+
+        // 返回重新选择目标
+        function goBackToSelect() {
+            if (confirm('返回首页重新输入目标？当前所有进度将被重置。')) {
+                // 清空所有数据
+                allGoalsList = [];
+                top5Goals = [];
+                top3Goals = [];
+                weights = [0, 0, 0];
+
+                // 清空输入框
+                const textarea = document.getElementById('allGoals');
+                if (textarea) {
+                    textarea.value = '';
+                }
+
+                // 保存状态
+                saveToStorage(1);
+
+                // 返回 Step 1（首页）
+                goToStep(1);
+                updateProgress(20);
+                renderGoalCards();
+                updateGoalCount();
+
+                showToast('可以重新输入目标了', 'info');
+            }
+        }
+
+        // HTML转义
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ===== 演示模式 =====
+        function startDemo() {
+            isDemoRunning = true;
+            localStorage.removeItem('focus2026_data');
+            localStorage.removeItem('focus2026_streak');
+            allGoalsList = [];
+            top5Goals = [];
+            top3Goals = [];
+
+            const demoGoals = [
+                '孩子中考考上好高中',
+                '阅读52本书',
+                '跑完1000公里保持健康',
+                '用AI创业',
+                '做内容创业',
+                '学习Python编程',
+                '每周写3篇文章',
+                '学会钢琴基础'
+            ];
+
+            // Step 1: 清空并回到第一步
+            goToStep(1);
+            updateProgress(20);
+            document.getElementById('allGoals').value = '';
+            renderGoalCards();
+            updateGoalCount();
+
+            // 逐个添加目标卡片
+            let goalIndex = 0;
+            function addNextGoal() {
+                if (goalIndex < demoGoals.length) {
+                    const textarea = document.getElementById('allGoals');
+                    textarea.value = demoGoals[goalIndex];
+                    addGoalCard(demoGoals[goalIndex]);
+                    textarea.value = '';
+                    goalIndex++;
+                    setTimeout(addNextGoal, 400); // 每0.4秒添加一个
+                } else {
+                    // 所有目标添加完成，进入下一步
+                    setTimeout(() => {
+                        playReleaseSound();
+                        goToStep2();
+                    }, 500);
+                }
+            }
+
+            setTimeout(addNextGoal, 500); // 开始添加目标
+
+            // 重新定义 Step 2-5 的演示逻辑（在 addNextGoal 完成后执行）
+            window.demoStep2 = function() {
+                allGoalsList = demoGoals.map((text, i) => ({
+                    id: i,
+                    text,
+                    icon: ['🎯', '💪', '📚', '🏃', '💼', '🚀', '✨', '🌟'][i % 8],
+                    selected: false
+                }));
+                renderStep2List();
+
+                // Step 2: 选5个
+                setTimeout(() => {
+                    const toSelect = [0, 1, 2, 3, 4];
+                    toSelect.forEach((id, idx) => {
+                        setTimeout(() => {
+                            allGoalsList[id].selected = true;
+                            renderStep2List();
+                        }, idx * 300);
+                    });
+
+                    setTimeout(() => {
+                        goToStep3();
+                        top5Goals = allGoalsList.filter(g => g.selected).map(g => ({ ...g, selected: false }));
+                        renderStep3List();
+
+                        // Step 3: 选3个
+                        setTimeout(() => {
+                            const toSelect3 = [0, 1, 2];
+                            toSelect3.forEach((relativeId, idx) => {
+                                setTimeout(() => {
+                                    top5Goals[relativeId].selected = true;
+                                    renderStep3List();
+                                }, idx * 300);
+                            });
+
+                            setTimeout(() => {
+                                goToStep4();
+                                top3Goals = top5Goals.filter(g => g.selected).map((g, i) => ({ ...g, weight: 0 }));
+                                renderWeightSection();
+
+                                // Step 4: 分配权重
+                                setTimeout(() => {
+                                    weights = [50, 30, 20];
+                                    renderWeightSection();
+                                    updateWeightTotal();
+
+                                    setTimeout(() => {
+                                        generateCard();
+
+                                    setTimeout(() => {
+                                        isDemoRunning = false;
+                                        localStorage.removeItem('focus2026_data');
+                                        localStorage.removeItem('focus2026_streak');
+                                        showToast('演示完成！现在轮到你了', 'success');
+                                    }, 2000);
+                                    }, 1000);
+                                }, 1000);
+                            }, 1500);
+                        }, 2000);
+                    }, 2000);
+                }, 1500);
+            };
+        }
+
+        // ===== 用户留存功能 =====
+
+        // 加载打卡数据
+        function loadStreakData() {
+            const streakData = JSON.parse(localStorage.getItem('focus2026_streak') || '{"streak": 0, "lastDate": null}');
+            const today = new Date().toDateString();
+            const lastDate = streakData.lastDate;
+
+            // 检查是否连续
+            if (lastDate) {
+                const last = new Date(lastDate);
+                const now = new Date(today);
+                const diffDays = Math.floor((now - last) / (1000 * 60 * 60 * 24));
+
+                if (diffDays > 1) {
+                    // 断了，重置
+                    streakData.streak = 0;
+                }
+            }
+
+            document.getElementById('streakCount').textContent = streakData.streak;
+
+            // 检查今天是否已打卡
+            if (lastDate === today) {
+                document.getElementById('checkinBtn').disabled = true;
+                document.getElementById('checkinBtn').textContent = '✓ 已打卡';
+            }
+        }
+
+        // 每日打卡
+        function dailyCheckin() {
+            const streakData = JSON.parse(localStorage.getItem('focus2026_streak') || '{"streak": 0, "lastDate": null}');
+            const today = new Date().toDateString();
+
+            if (streakData.lastDate === today) {
+                return;
+            }
+
+            streakData.streak++;
+            streakData.lastDate = today;
+            localStorage.setItem('focus2026_streak', JSON.stringify(streakData));
+
+            document.getElementById('streakCount').textContent = streakData.streak;
+            document.getElementById('checkinBtn').disabled = true;
+            document.getElementById('checkinBtn').textContent = '✓ 已打卡';
+
+            // 打卡奖励提示
+            const messages = [
+                '太棒了！继续保持！',
+                '专注力+1！',
+                '你比昨天更进一步！',
+                '连续打卡就是胜利！',
+                '每一份坚持都算数！'
+            ];
+            const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+            showToast(randomMsg, 'success');
+        }
+
+        // 复制分享链接
+        function copyShareLink() {
+            const url = 'https://sangzhexianxian.github.io/focus/';
+            const shareText = `2026年，我只做3件事，其他的都放弃！这个工具帮我找到了真正重要的目标🔥\n\n${url}`;
+
+            // 优先使用现代 API
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(shareText).then(() => {
+                    showCopySuccess();
+                    addPoints(15, '分享专注卡');
+                }).catch(() => {
+                    fallbackCopy(shareText);
+                });
+            } else {
+                fallbackCopy(shareText);
+            }
+        }
+
+        // 备用复制方案
+        function fallbackCopy(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            textarea.style.top = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.select();
+
+            try {
+                document.execCommand('copy');
+                showCopySuccess();
+            } catch (err) {
+                // 最后的保底方案：prompt
+                prompt('请手动复制以下内容：', text);
+            }
+
+            document.body.removeChild(textarea);
+        }
+
+        // 显示复制成功提示
+        function showCopySuccess() {
+            const success = document.getElementById('copySuccess');
+            success.style.display = 'inline';
+            setTimeout(() => {
+                success.style.display = 'none';
+            }, 3000);
+        }
+
+        // ===== 用户认证相关 =====
+
+        // 检查登录状态
+        async function checkAuth() {
+            if (!supabaseClient) {
+                console.log('Supabase 未初始化，使用本地模式');
+                currentUser = null;
+                isCloudMode = false;
+                updateUserUI(false);
+                loadFromStorage();
+                return;
+            }
+
+            try {
+                const { data: { session }, error } = await supabaseClient.auth.getSession();
+
+                if (error) {
+                    console.error('获取会话失败:', error);
+                    throw error;
+                }
+
+                if (session) {
+                    currentUser = session.user;
+                    isCloudMode = true;
+                    updateUserUI(true);
+                    await loadFromCloud();
+                } else {
+                    currentUser = null;
+                    isCloudMode = false;
+                    updateUserUI(false);
+                    loadFromStorage();
+                }
+            } catch (error) {
+                console.error('检查登录状态失败:', error);
+                currentUser = null;
+                isCloudMode = false;
+                updateUserUI(false);
+                loadFromStorage();
+            }
+        }
+
+        // 显示登录弹窗
+        function showLoginModal() {
+            document.getElementById('loginModal').classList.add('show');
+            showLoginForm();
+        }
+
+        // 隐藏登录弹窗
+        function hideLoginModal() {
+            document.getElementById('loginModal').classList.remove('show');
+        }
+
+        // 显示积分弹窗
+        function showPointsModal() {
+            updatePointsModal();
+            document.getElementById('pointsModal').classList.add('show');
+        }
+
+        // 隐藏积分弹窗
+        function hidePointsModal() {
+            document.getElementById('pointsModal').classList.remove('show');
+        }
+
+        // 更新积分弹窗内容
+        function updatePointsModal() {
+            // 更新积分概览
+            document.getElementById('modalTotalPoints').textContent = userPoints.total;
+            const levelInfo = levelConfig[userPoints.level];
+            document.getElementById('modalUserLevel').textContent = `LV${userPoints.level} ${levelInfo.name}`;
+            document.getElementById('modalUserLevel').style.color = levelInfo.color;
+            document.getElementById('modalStreak').textContent = userPoints.checkInStreak;
+
+            // 更新等级进度
+            const currentLevelPoints = levelConfig[userPoints.level].points;
+            const nextLevelPoints = levelConfig[userPoints.level + 1]
+                ? levelConfig[userPoints.level + 1].points
+                : currentLevelPoints * 2;
+            const progress = userPoints.total - currentLevelPoints;
+            const target = nextLevelPoints - currentLevelPoints;
+            const percent = Math.min((progress / target) * 100, 100);
+
+            document.getElementById('levelProgress').textContent = `${progress} / ${target}`;
+            document.getElementById('levelProgressBar').style.width = `${percent}%`;
+
+            // 更新每日签到状态
+            const today = new Date().toDateString();
+            const checkInSection = document.getElementById('dailyCheckInSection');
+            if (userPoints.lastCheckInDate === today) {
+                checkInSection.innerHTML = `
+                    <h4 style="margin-bottom: 8px; color: #155724;">✓ 今日已签到</h4>
+                    <p style="margin: 0; font-size: 13px; color: #155724;">明天再来签到吧</p>
+                `;
+                checkInSection.style.cursor = 'default';
+                checkInSection.onclick = null;
+            } else {
+                checkInSection.innerHTML = `
+                    <h4 style="margin-bottom: 8px; color: #155724;">📅 每日签到</h4>
+                    <p style="margin: 0; font-size: 13px; color: #155724;">签到获得 +10 积分，连续签到有额外奖励</p>
+                `;
+                checkInSection.style.cursor = 'pointer';
+                checkInSection.onclick = dailyCheckIn;
+            }
+
+            // 更新成就列表
+            updateAchievementsList();
+        }
+
+        // 更新成就列表
+        function updateAchievementsList() {
+            const container = document.getElementById('achievementsList');
+
+            if (userPoints.achievements.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px; color: #999; font-size: 13px; grid-column: 1 / -1;">
+                        暂无成就，快去完成任务吧！
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = userPoints.achievements.map(id => {
+                const achievement = achievementConfig[id];
+                return `
+                    <div class="achievement-item">
+                        <div class="icon">${achievement.icon}</div>
+                        <div class="name">${achievement.name}</div>
+                        <div class="desc">+${achievement.points}分</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 显示登录表单
+        function showLoginForm() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('registerForm').style.display = 'none';
+        }
+
+        // 游客模式（本地存储）
+        function handleGuestLogin() {
+            currentUser = null;
+            isCloudMode = false;
+            updateUserUI(false);
+            hideLoginModal();
+            showToast('已进入游客模式，数据保存在本地', 'info');
+            loadFromStorage();
+        }
+
+        // 忘记密码
+        function showForgotPassword() {
+            event.preventDefault();
+            const email = prompt('请输入您的邮箱地址，我们将发送密码重置链接：');
+
+            if (email && email.trim()) {
+                if (!supabaseClient) {
+                    showToast('云端服务未初始化', 'error');
+                    return;
+                }
+
+                // 这里可以调用 Supabase 的密码重置功能
+                showToast('密码重置链接已发送到您的邮箱', 'info');
+            }
+        }
+
+        // 显示注册表单
+        function showRegisterForm() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+        }
+
+        // 处理登录
+        async function handleLogin() {
+            if (!supabaseClient) {
+                showToast('云端服务未初始化，请检查网络连接', 'error');
+                return;
+            }
+
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const btn = document.getElementById('loginSubmitBtn');
+
+            if (!email || !password) {
+                showToast('请填写邮箱和密码', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = '登录中...';
+
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email,
+                    password
+                });
+
+                if (error) {
+                    console.error('登录错误:', error);
+                    throw error;
+                }
+
+                currentUser = data.user;
+                isCloudMode = true;
+                updateUserUI(true);
+                hideLoginModal();
+                showToast('登录成功！', 'success');
+                await loadFromCloud();
+            } catch (error) {
+                console.error('登录失败:', error);
+                const errorMsg = error.message || '登录失败，请检查邮箱和密码';
+                showToast(errorMsg, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '登录';
+            }
+        }
+
+        // 处理注册
+        async function handleRegister() {
+            if (!supabaseClient) {
+                showToast('云端服务未初始化，请检查网络连接', 'error');
+                return;
+            }
+
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            const agreeTerms = document.getElementById('agreeTerms').checked;
+            const btn = document.getElementById('registerSubmitBtn');
+
+            if (!email || !password) {
+                showToast('请填写所有字段', 'error');
+                return;
+            }
+
+            // 邮箱格式验证
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showToast('请输入有效的邮箱地址', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showToast('密码至少需要6位', 'error');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showToast('两次密码不一致', 'error');
+                return;
+            }
+
+            if (!agreeTerms) {
+                showToast('请先阅读并同意服务条款', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = '注册中...';
+
+            try {
+                const { data, error } = await supabaseClient.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        emailRedirectTo: window.location.href
+                    }
+                });
+
+                if (error) {
+                    console.error('注册错误:', error);
+
+                    // 特殊错误处理
+                    if (error.message.includes('User already registered')) {
+                        showToast('该邮箱已被注册，请直接登录', 'error');
+                    } else {
+                        throw error;
+                    }
+                    return;
+                }
+
+                showToast('注册成功！请检查邮箱确认账号', 'success');
+                showLoginForm();
+            } catch (error) {
+                console.error('注册失败:', error);
+                const errorMsg = error.message || '注册失败，请稍后重试';
+                showToast(errorMsg, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '注册';
+            }
+        }
+
+        // 退出登录
+        async function logout() {
+            if (!confirm('确定要退出登录吗？本地数据将不会删除。')) return;
+
+            if (supabaseClient) {
+                await supabaseClient.auth.signOut();
+            }
+
+            currentUser = null;
+            isCloudMode = false;
+            updateUserUI(false);
+            loadFromStorage();
+            hideUserMenu();
+            showToast('已退出登录', 'success');
+        }
+
+        // 更新用户UI
+        function updateUserUI(isLoggedIn) {
+            const syncStatus = document.getElementById('syncStatus');
+            const syncText = document.getElementById('syncText');
+            const bottomLoginBtn = document.getElementById('bottomLoginBtn');
+            const bottomLoggedInActions = document.getElementById('bottomLoggedInActions');
+
+            if (isLoggedIn && currentUser) {
+                syncStatus.classList.add('show', 'synced');
+                syncText.textContent = '已登录';
+                // 底部栏显示登录后的操作
+                if (bottomLoginBtn) {
+                    bottomLoginBtn.style.display = 'none';
+                }
+                if (bottomLoggedInActions) {
+                    bottomLoggedInActions.style.display = 'flex';
+                }
+            } else {
+                syncStatus.classList.remove('show', 'synced');
+                syncText.textContent = '本地模式';
+                // 底部栏显示登录按钮
+                if (bottomLoginBtn) {
+                    bottomLoginBtn.style.display = 'inline-block';
+                }
+                if (bottomLoggedInActions) {
+                    bottomLoggedInActions.style.display = 'none';
+                }
+            }
+        }
+
+        // 切换用户菜单
+        function toggleUserMenu() {
+            const menu = document.getElementById('userMenu');
+            menu.classList.toggle('show');
+
+            // 点击外部关闭菜单
+            document.addEventListener('click', function closeMenu(e) {
+                if (!e.target.closest('.user-info')) {
+                    menu.classList.remove('show');
+                    document.removeEventListener('click', closeMenu);
+                }
+            });
+        }
+
+        // 隐藏用户菜单
+        function hideUserMenu() {
+            document.getElementById('userMenu').classList.remove('show');
+        }
+
+        // 查看个人资料
+        function viewProfile() {
+            hideUserMenu();
+            if (currentUser) {
+                alert(`邮箱：${currentUser.email}\n创建时间：${new Date(currentUser.created_at).toLocaleDateString()}`);
+            }
+        }
+
+        // ===== 云端同步相关 =====
+
+        // 从云端加载数据
+        async function loadFromCloud() {
+            if (!currentUser || !supabaseClient) return;
+
+            setSyncStatus('syncing');
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('user_focus_data')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .single();
+
+                if (error && error.code !== 'PGRST116') {
+                    console.error('查询云端数据失败:', error);
+                    throw error;
+                }
+
+                if (data && data.focus_data) {
+                    const savedData = JSON.parse(data.focus_data);
+                    if (savedData.step) {
+                        allGoalsList = savedData.allGoalsList || [];
+                        top5Goals = savedData.top5Goals || [];
+                        top3Goals = savedData.top3Goals || [];
+                        weights = savedData.weights || [0, 0, 0];
+
+                        // 恢复到对应步骤
+                        if (savedData.step >= 1) {
+                            goToStep(1);
+                            updateProgress(20);
+                            renderGoalCards();
+                            updateGoalCount();
+                        }
+                        if (savedData.step >= 2) {
+                            goToStep(2);
+                            updateProgress(40);
+                            renderStep2List();
+                        }
+                        if (savedData.step >= 3) {
+                            goToStep(3);
+                            updateProgress(60);
+                            renderStep3List();
+                        }
+                        if (savedData.step >= 4) {
+                            goToStep(4);
+                            updateProgress(80);
+                            renderWeightSection();
+                        }
+                        if (savedData.step >= 5) {
+                            goToStep(5);
+                            updateProgress(100);
+                            generateCard();
+                        }
+
+                        setSyncStatus('synced');
+                        showToast('数据已从云端同步', 'info');
+                    }
+                } else {
+                    loadFromStorage();
+                }
+            } catch (error) {
+                console.error('从云端加载失败:', error);
+                setSyncStatus('error');
+                showToast('加载数据失败，使用本地数据', 'error');
+                loadFromStorage();
+            }
+        }
+
+        // 保存到云端
+        async function saveToCloud(step) {
+            if (!currentUser || !supabaseClient) return;
+
+            const data = {
+                step: step,
+                allGoalsList: allGoalsList,
+                top5Goals: top5Goals,
+                top3Goals: top3Goals,
+                weights: weights
+            };
+
+            setSyncStatus('syncing');
+
+            try {
+                const { data: existing, error: fetchError } = await supabaseClient
+                    .from('user_focus_data')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .single();
+
+                if (fetchError && fetchError.code !== 'PGRST116') throw fetchError;
+
+                const now = new Date().toISOString();
+
+                if (existing) {
+                    // 更新现有记录
+                    await supabaseClient
+                        .from('user_focus_data')
+                        .update({
+                            focus_data: JSON.stringify(data),
+                            updated_at: now
+                        })
+                        .eq('user_id', currentUser.id);
+                } else {
+                    // 创建新记录
+                    await supabaseClient
+                        .from('user_focus_data')
+                        .insert({
+                            user_id: currentUser.id,
+                            focus_data: JSON.stringify(data),
+                            created_at: now,
+                            updated_at: now
+                        });
+                }
+
+                setSyncStatus('synced');
+            } catch (error) {
+                console.error('保存到云端失败:', error);
+                setSyncStatus('error');
+                showToast('保存失败，请检查网络', 'error');
+            }
+        }
+
+        // 手动同步到云端
+        async function syncToCloud() {
+            hideUserMenu();
+
+            if (!currentUser) {
+                showToast('请先登录', 'error');
+                showLoginModal();
+                return;
+            }
+
+            if (!supabaseClient) {
+                console.error('Supabase 客户端未初始化');
+                showToast('云服务未初始化，请刷新页面重试', 'error');
+                return;
+            }
+
+            setSyncStatus('syncing');
+            showToast('正在同步...', 'info');
+
+            try {
+                // 保存到云端
+                const data = {
+                    step: getCurrentStep(),
+                    allGoalsList: allGoalsList,
+                    top5Goals: top5Goals,
+                    top3Goals: top3Goals,
+                    weights: weights
+                };
+
+                const { data: existing, error: fetchError } = await supabaseClient
+                    .from('user_focus_data')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .single();
+
+                const now = new Date().toISOString();
+
+                if (existing) {
+                    await supabaseClient
+                        .from('user_focus_data')
+                        .update({
+                            focus_data: JSON.stringify(data),
+                            updated_at: now
+                        })
+                        .eq('user_id', currentUser.id);
+                } else {
+                    await supabaseClient
+                        .from('user_focus_data')
+                        .insert({
+                            user_id: currentUser.id,
+                            focus_data: JSON.stringify(data),
+                            created_at: now,
+                            updated_at: now
+                        });
+                }
+
+                setSyncStatus('synced');
+                showToast('同步成功！', 'success');
+            } catch (error) {
+                console.error('同步失败:', error);
+                console.error('错误详情:', error.message, error.code);
+                setSyncStatus('error');
+                const errorMsg = error.message || '同步失败，请检查网络';
+                showToast(`同步失败: ${errorMsg}`, 'error');
+            }
+        }
+
+        // 获取当前步骤
+        function getCurrentStep() {
+            if (top3Goals.length === 3 && weights.reduce((a, b) => a + b, 0) === 100) return 5;
+            if (top3Goals.length === 3) return 4;
+            if (top5Goals.length === 5) return 3;
+            if (top5Goals.length > 0) return 2;
+            return allGoalsList.length > 0 ? 1 : 0;
+        }
+
+        // 设置同步状态
+        function setSyncStatus(status) {
+            const syncStatus = document.getElementById('syncStatus');
+            const syncText = document.getElementById('syncText');
+
+            syncStatus.classList.remove('synced', 'syncing', 'error');
+
+            switch (status) {
+                case 'synced':
+                    syncStatus.classList.add('synced');
+                    syncText.textContent = '已同步';
+                    break;
+                case 'syncing':
+                    syncStatus.classList.add('syncing');
+                    syncText.textContent = '同步中...';
+                    break;
+                case 'error':
+                    syncText.textContent = '同步失败';
+                    break;
+                default:
+                    syncText.textContent = isCloudMode ? '已登录' : '本地模式';
+            }
+        }
+
+        // 重写 saveToStorage 以支持云端同步
+        const originalSaveToStorage = saveToStorage;
+        saveToStorage = async function(step) {
+            // 保存到本地
+            originalSaveToStorage(step);
+
+            // 如果已登录，保存到云端
+            if (isCloudMode && currentUser) {
+                saveToCloud(step);
+            }
+        };
+
+        // 页面加载
+        window.onload = async function() {
+            console.log('页面加载完成');
+
+            // 初始化积分系统
+            loadPointsFromLocal();
+
+            // 初始化Step 1描述文字
+            updateStep1Description();
+
+            // 绑定输入框事件
+            const textarea = document.getElementById('allGoals');
+            if (textarea) {
+                console.log('找到输入框，绑定键盘事件');
+                textarea.addEventListener('keydown', handleInputKeydown);
+            } else {
+                console.error('找不到输入框 allGoals');
+            }
+
+            await checkAuth();
+        };
+    </script>
+</body>
+</html>
